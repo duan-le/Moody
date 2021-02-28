@@ -3,6 +3,8 @@ import discord
 import os
 from googleapiclient import discovery
 
+DISCORD_BOT_TOKEN = "ODE1MDg4Njk1NjIyNzYyNDk3.YDnUgA.DLDkIu-90JnmfM6YDX_AN-_08K4"
+PRESCRIPTIVE_API_KEY = "AIzaSyDwsIyO-A2P5Q8nR2deW6B0IlXbcYnNV4E"
 service = discovery.build("commentanalyzer", "v1alpha1", developerKey=PRESCRIPTIVE_API_KEY)
 
 languages_dict = {
