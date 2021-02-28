@@ -4,8 +4,8 @@ import os
 from googleapiclient import discovery
 from collections import Counter
 
-DISCORD_BOT_TOKEN = ""
-PERSPECTIVE_API_KEY = ""
+DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
 service = discovery.build("commentanalyzer", "v1alpha1", developerKey=PERSPECTIVE_API_KEY)
 
 languages_dict = {
@@ -64,7 +64,7 @@ profane_users = "/"
 #   0.87 for severe
 #   0.91 for toxic
 profanity_index = 0.81
-severe_profanity_index = 0.87
+severe_toxicity_index = 0.87
 toxicity_index = 0.91
 
 @client.event
@@ -79,7 +79,7 @@ async def on_message(message):
     global languages
     global profane_users
     global profanity_index
-    global severe_profanity_index
+    global severe_toxicity_index
     global toxicity_index
    
     # Check for commands
@@ -91,7 +91,7 @@ async def on_message(message):
                 "```#info```" +
                 "2. To change the analyzed language: " +
                 "```#lang <language>```"
-                "3. To view the current list of profane members (admin only): " +
+                "3. To view the current list of profane members (*admin only*): " +
                 "```#rep```"
                 "4. To view the current value of profanity allowed: " +
                 "```#prof```"
@@ -99,20 +99,17 @@ async def on_message(message):
                 "```#sev```"
                 "6. To view the current value of toxicity allowed: " +
                 "```#tox```"
-                "7. To change the current value of profanity allowed (admin only): " +
+                "7. To change the current value of profanity allowed (*admin only*): " +
                 "```#prof_ch```"
-                "8. To change the current value of severe profanity allowed (admin only): " +
+                "8. To change the current value of severe profanity allowed (*admin only*): " +
                 "```#sev_ch```"
-                "9. To change the current value of toxicity allowed (admin only): " +
+                "9. To change the current value of toxicity allowed (*admin only*): " +
                 "```#tox_ch```"
             )
             await message.channel.send(reply)
         # Displays what the bot do
         elif message.content.startswith("#info"):
-            reply = (
-                "This bot helps to analyze text that is typed in discord, and notifies admins of any toxicity and/or profanity. When a user types anything toxic and/or profane, a message will be sent to the admins if it exceeds a toxicity rating of X%. If the user consistently types toxic and/or profane comments X times, there will be a message that appears in the chat visible to all." +
-                "Settings that you can change for this bot include the language being analyzed, the level of toxicity that you want to be notified for, and the number of times a user is toxic before a message is sent to the public chat."
-            )
+            reply = "This bot helps to analyze messages in discord, and take actions if there is presence of toxicity and/or profanity."
             await message.channel.send(reply)
         # Analysis language selection command 
         elif message.content.startswith("#lang"):
@@ -130,12 +127,12 @@ async def on_message(message):
         elif message.content.startswith("#rep"):
             if message.author.top_role.permissions.administrator:
                 if profane_users == "/":
-                    reply = "No user is recorded in the profanity list"
+                    reply = "No user is recorded in the profanity list."
                 else:
-                    reply = "Users and their profanity usage frequency:\n"
+                    reply = "Users and their violation frequencies:\n"
                     reply += profane_users_ranking(profane_users)
             else:
-                reply = "You are not an admin"
+                reply = "You are not an admin."
             await message.channel.send(reply)
         #DO NOT CHANGE THE ORDER OF THE FOLLOWING
         elif message.content.startswith("#prof_ch"):
@@ -148,9 +145,9 @@ async def on_message(message):
                         profanity_index = 1 - temp
                         reply = "Your allowed profanity level is: " + str(round(1 - profanity_index, 2))
                     else:
-                        reply = "Your profanity level must be between `0` and `1`"
+                        reply = "Your profanity level must be between `0` and `1`."
             else:
-                reply = "You are not an admin"
+                reply = "You are not an admin."
             await message.channel.send(reply)
         elif message.content.startswith("#sev_ch"):
             if message.author.top_role.permissions.administrator:
@@ -159,12 +156,12 @@ async def on_message(message):
                 if len(arr) == 2:
                     temp = float(arr[1])
                     if temp >= 0.0 and temp <= 1.0:
-                        severe_profanity_index = 1 - temp
-                        reply = "Your allowed severe profanity level is: " + str(round(1 - severe_profanity_index, 2))
+                        severe_toxicity_index = 1 - temp
+                        reply = "Your allowed severe toxicity level is: " + str(round(1 - severe_toxicity_index, 2))
                     else:
-                        reply = "Your severe profanity level must be between `0` and `1`"
+                        reply = "Your severe toxicity level must be between `0` and `1`."
             else:
-                reply = "You are not an admin"
+                reply = "You are not an admin."
             await message.channel.send(reply)
         elif message.content.startswith("#tox_ch"):
             if message.author.top_role.permissions.administrator:
@@ -176,14 +173,14 @@ async def on_message(message):
                         toxicity_index = 1 - temp
                         reply = "Your allowed toxicity level is: " + str(round(1 - toxicity_index, 2))
                     else:
-                        reply = "Your toxicity level must be between `0` and `1`"
+                        reply = "Your toxicity level must be between `0` and `1`."
             else:
-                reply = "You are not an admin"
+                reply = "You are not an admin."
             await message.channel.send(reply)
         elif message.content.startswith("#prof"):
             await message.channel.send("Your allowed profanity level is: " + str(round(1 - profanity_index, 2)))
         elif message.content.startswith("#sev"):
-            await message.channel.send("Your allowed severe profanity level is: " + str(round(1 - severe_profanity_index, 2)))
+            await message.channel.send("Your allowed severe toxicity level is: " + str(round(1 - severe_toxicity_index, 2)))
         elif message.content.startswith("#tox"):
             await message.channel.send("Your allowed toxicity level is: " + str(round(1 - toxicity_index, 2)))
         else:
@@ -195,16 +192,16 @@ async def on_message(message):
     else:
         response = service.comments().analyze(body=create_analyze_request(message.content)).execute()
         reply = ""
-        if response["attributeScores"]["TOXICITY"]["summaryScore"]["value"] >= toxicity_index or response["attributeScores"]["SEVERE_TOXICITY"]["summaryScore"]["value"] >= severe_profanity_index:
+        if response["attributeScores"]["TOXICITY"]["summaryScore"]["value"] >= toxicity_index or response["attributeScores"]["SEVERE_TOXICITY"]["summaryScore"]["value"] >= severe_toxicity_index:
             await message.delete()
             reply += message.author.mention
-            reply += ", your level of toxicity is getting to a staggeringly high point! Please be more mindful of others around you."
+            reply += ", your last message was removed for being toxic! Please be nicer and be more mindful of others around you."
             profane_users += message.author.mention
             profane_users += "/"
         elif response["attributeScores"]["PROFANITY"]["summaryScore"]["value"] >= profanity_index:
             await message.delete()
             reply += message.author.mention
-            reply += ", you are swearing just a bit too much! Please tone down the profanity!"
+            reply += ", your last message was removed for being profane! Please tone down the profanity!"
             profane_users += message.author.mention
             profane_users += "/"
         # Print out the confidence score
