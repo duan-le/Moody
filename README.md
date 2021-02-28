@@ -24,11 +24,13 @@ Our Discord bot is currently accessible with the following functions.
 * **#tox_ch** - This is an admin-only command that allows you to change the current value of toxicity allowed.
 
 ## How did we build Moody?
+Moody is developed using Python and the Discord API. Moody's emotion analysis functionality is made with the help of Perspective API's machine learning models which allows for the identification of abusive and toxic messages within a Discord server. A record of users who are toxic are kept in a database using MongoDB Atlas.
 
-The following technologies were involved in the making of Moody.
+The following technologies were involved in the making of Moody:
 * [Python](https://www.python.org/)
 * [Perspective API](https://www.perspectiveapi.com/)
 * [Discord API](https://discord.com/developers/docs/intro)
+* [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 
 ## Challenges building Moody?
 * Learning the Discord framework.
@@ -46,10 +48,8 @@ The following technologies were involved in the making of Moody.
 
 ## What does the future hold?
 * Increasing features and functionality.
+* Add more languages
+* To be able to analyze more emotions
+* Dashboard
+* Social Media
 * Partnering with others to expand the project.
-
-## Created By
-* Duan Le
-* Nicolo Rivera
-* Hemish Minhas
-* Khaled Elmalawany
