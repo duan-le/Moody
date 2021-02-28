@@ -1,8 +1,12 @@
 import json
 import discord
 import os
+import pymongo
 from googleapiclient import discovery
 from collections import Counter
+
+mongo_client = pymongo.MongoClient(os.getenv("MONGO_DB_KEY"))
+my_db = mongo_client["Servers"]
 
 DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 PERSPECTIVE_API_KEY = os.getenv('PERSPECTIVE_API_KEY')
@@ -44,19 +48,13 @@ def create_analyze_request(message):
         "languages": languages
     }
 
-def profane_users_ranking(my_string):
-    string = ""
-    # Split the string into a list list
-    my_string_list = my_string.split("/")
-    # Remove empty list elements
-    my_string_list = list(filter(None, my_string_list))
-    # Frequency sorting and removal of duplicates
-    my_non_duplicated_list = [key for key, value in Counter(my_string_list).most_common()]
-    for member in my_non_duplicated_list:
-        string += str(member) + "  - " + str(my_string_list.count(member)) + " time(s)"
-        string += "\n"
+def get_violations_list(my_col):
+    string = "```"
+    for user in my_col.find():
+        string += str(user["username"]) + " - " + str(user["violations"]) + " time(s)\n"
+    string += "```"
     return string
-
+    
 client = discord.Client()
 profane_users = "/"
 # Default values are:
@@ -70,12 +68,8 @@ toxicity_index = 0.91
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
-    # text_channel_list = []
     for server in client.guilds:
         await server.text_channels[0].send("Moody is online! Type `#commands` to start.")
-        # for channel in server.text_channels:
-        #     text_channel_list.append(channel)
-    # print(text_channel_list)
     
 
 @client.event
@@ -84,7 +78,6 @@ async def on_message(message):
         return
     
     global languages
-    global profane_users
     global profanity_index
     global severe_toxicity_index
     global toxicity_index
@@ -98,7 +91,7 @@ async def on_message(message):
                 "```#info```" +
                 "2. To change the analyzed language: " +
                 "```#lang <language>```"
-                "3. To view the current list of profane members (*admin only*): " +
+                "3. To view the current list of members who have violations (*admin only*): " +
                 "```#rep```"
                 "4. To view the current value of profanity allowed: " +
                 "```#prof```"
@@ -133,11 +126,12 @@ async def on_message(message):
             await message.channel.send(reply)
         elif message.content.startswith("#rep"):
             if message.author.top_role.permissions.administrator:
-                if profane_users == "/":
+                my_col = my_db[str(message.guild.id)]
+                if my_col.find().count() < 1:
                     reply = "No user is recorded in the profanity list."
                 else:
                     reply = "Users and their violation frequencies:\n"
-                    reply += profane_users_ranking(profane_users)
+                    reply += get_violations_list(my_db[str(message.guild.id)])
             else:
                 reply = "You are not an admin."
             await message.channel.send(reply)
@@ -199,23 +193,27 @@ async def on_message(message):
     else:
         response = service.comments().analyze(body=create_analyze_request(message.content)).execute()
         reply = ""
+        my_col = my_db[str(message.guild.id)]
         if response["attributeScores"]["TOXICITY"]["summaryScore"]["value"] >= toxicity_index or response["attributeScores"]["SEVERE_TOXICITY"]["summaryScore"]["value"] >= severe_toxicity_index:
             await message.delete()
             reply += message.author.mention
             reply += ", your last message was removed for being toxic! Please be nicer and be more mindful of others around you."
+            if (my_col.find({"userid": message.author.id}).count() > 0):
+                my_col.update_one({"userid": message.author.id}, {"$inc": {"violations": 1}})
+            else:
+                my_col.insert_one({"username": message.author.name, "userid": message.author.id, "violations": 1});
             profane_users += message.author.mention
             profane_users += "/"
         elif response["attributeScores"]["PROFANITY"]["summaryScore"]["value"] >= profanity_index:
             await message.delete()
             reply += message.author.mention
             reply += ", your last message was removed for being profane! Please tone down the profanity!"
+            if (my_col.find({"userid": message.author.id}).count() > 0):
+                my_col.update_one({"userid": message.author.id}, {"$inc": {"violations": 1}})
+            else:
+                my_col.insert_one({"username": message.author.name, "userid": message.author.id, "violations": 1});
             profane_users += message.author.mention
             profane_users += "/"
-        # Print out the confidence score
-        # reply += "```"
-        # for attribute in response["attributeScores"]:
-        #     reply += attribute + ": " + str(response["attributeScores"][attribute]["summaryScore"]["value"]) + "\n"
-        # reply += "```"
         if (reply != ""):
             await message.channel.send(reply)
 
