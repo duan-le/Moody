@@ -14,7 +14,7 @@ Moody is a Discord bot that analyzes text chats to identify the current mood of 
 
 Our Discord bot is currently accessible with the following functions.
 * **#info**  - This allows you to learn more about what Moody does.
-* **#lang <language>** - This allows you to change the analyzed language.
+* **#lang** - This allows you to change the analyzed language.
 * **#rep** - This is an admin-only command to view a list of current profane members.
 * **#prof** - This allows you to view the value of profanity allowed.
 * **#sev** - This allows you to view the value of severe toxicity allowed.
@@ -26,9 +26,9 @@ Our Discord bot is currently accessible with the following functions.
 ## How did we build Moody?
 
 The following technologies were involved in the making of Moody.
-* Python
-* Perspective API
-* Discord
+* [Python](https://www.python.org/)
+* [Perspective API](https://www.perspectiveapi.com/)
+* [Discord](https://discord.com/developers/docs/intro)
 
 ## Challenges building Moody?
 * Learning the Discord framework.
@@ -48,7 +48,7 @@ The following technologies were involved in the making of Moody.
 * Increasing features and functionality.
 * Partnering with others to expand the project.
 
-## Made By
+## Created By
 * Duan Le
 * Nicolo Rivera
 * Hemish Minhas
