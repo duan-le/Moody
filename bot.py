@@ -202,8 +202,6 @@ async def on_message(message):
                 my_col.update_one({"userid": message.author.id}, {"$inc": {"violations": 1}})
             else:
                 my_col.insert_one({"username": message.author.name, "userid": message.author.id, "violations": 1});
-            profane_users += message.author.mention
-            profane_users += "/"
         elif response["attributeScores"]["PROFANITY"]["summaryScore"]["value"] >= profanity_index:
             await message.delete()
             reply += message.author.mention
@@ -212,8 +210,6 @@ async def on_message(message):
                 my_col.update_one({"userid": message.author.id}, {"$inc": {"violations": 1}})
             else:
                 my_col.insert_one({"username": message.author.name, "userid": message.author.id, "violations": 1});
-            profane_users += message.author.mention
-            profane_users += "/"
         if (reply != ""):
             await message.channel.send(reply)
 
