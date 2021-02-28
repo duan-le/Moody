@@ -5,8 +5,8 @@ from googleapiclient import discovery
 from collections import Counter
 
 DISCORD_BOT_TOKEN = ""
-PRESCRIPTIVE_API_KEY = ""
-service = discovery.build("commentanalyzer", "v1alpha1", developerKey=PRESCRIPTIVE_API_KEY)
+PERSPECTIVE_API_KEY = ""
+service = discovery.build("commentanalyzer", "v1alpha1", developerKey=PERSPECTIVE_API_KEY)
 
 languages_dict = {
     "en": "english",
