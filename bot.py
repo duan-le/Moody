@@ -91,19 +91,19 @@ async def on_message(message):
                 "```#info```" +
                 "2. To change the analyzed language: " +
                 "```#lang <language>```"
-                "3. To view the curent list of profane members (admin only): " +
+                "3. To view the current list of profane members (admin only): " +
                 "```#rep```"
                 "4. To view the current value of profanity allowed: " +
                 "```#prof```"
-                "5. To view the curent value of severe profanity allowed: " +
+                "5. To view the current value of severe profanity allowed: " +
                 "```#sev```"
-                "6. To view the curent value of toxicity allowed: " +
+                "6. To view the current value of toxicity allowed: " +
                 "```#tox```"
                 "7. To change the current value of profanity allowed (admin only): " +
                 "```#prof_ch```"
-                "8. To change the curent value of severe profanity allowed (admin only): " +
+                "8. To change the current value of severe profanity allowed (admin only): " +
                 "```#sev_ch```"
-                "9. To change the curent value of toxicity allowed (admin only): " +
+                "9. To change the current value of toxicity allowed (admin only): " +
                 "```#tox_ch```"
             )
             await message.channel.send(reply)
@@ -194,19 +194,25 @@ async def on_message(message):
     # Analyze normal messages
     else:
         response = service.comments().analyze(body=create_analyze_request(message.content)).execute()
-        reply = "NLP RESULT\n"
+        reply = ""
         if response["attributeScores"]["TOXICITY"]["summaryScore"]["value"] >= toxicity_index or response["attributeScores"]["SEVERE_TOXICITY"]["summaryScore"]["value"] >= severe_profanity_index:
-            reply += "I see the level of toxicity is getting to a staggeringly high point! Please be more mindful of others around you."
+            await message.delete()
+            reply += message.author.mention
+            reply += ", your level of toxicity is getting to a staggeringly high point! Please be more mindful of others around you."
             profane_users += message.author.mention
             profane_users += "/"
         elif response["attributeScores"]["PROFANITY"]["summaryScore"]["value"] >= profanity_index:
-            reply += "It looks like you are swearing just a bit too much! Please tone down the profanity!"
+            await message.delete()
+            reply += message.author.mention
+            reply += ", you are swearing just a bit too much! Please tone down the profanity!"
             profane_users += message.author.mention
             profane_users += "/"
-        reply += "```"
-        for attribute in response["attributeScores"]:
-            reply += attribute + ": " + str(response["attributeScores"][attribute]["summaryScore"]["value"]) + "\n"
-        reply += "```"
-        await message.channel.send(reply)
+        # Print out the confidence score
+        # reply += "```"
+        # for attribute in response["attributeScores"]:
+        #     reply += attribute + ": " + str(response["attributeScores"][attribute]["summaryScore"]["value"]) + "\n"
+        # reply += "```"
+        if (reply != ""):
+            await message.channel.send(reply)
 
 client.run(DISCORD_BOT_TOKEN)
