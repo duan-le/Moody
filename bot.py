@@ -70,12 +70,12 @@ toxicity_index = 0.91
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
-    text_channel_list = []
+    # text_channel_list = []
     for server in client.guilds:
-        for channel in server.text_channels:
-            text_channel_list.append(channel)
+        await server.text_channels[0].send("Moody is online! Type `#commands` to start.")
+        # for channel in server.text_channels:
+        #     text_channel_list.append(channel)
     # print(text_channel_list)
-    await server.text_channels[11].send("Moody is online! Type `#commands` to start.")
     
 
 @client.event
