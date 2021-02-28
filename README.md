@@ -1,5 +1,5 @@
-# Moody [Devpost](https://devpost.com/software/vibecheck-r95mws)
-
+# Moody 
+Visit our Devpost [here](https://devpost.com/software/vibecheck-r95mws)!
 
 ## What is Moody?
 Moody is a Discord bot that analyzes text chats to identify the current mood of the conversation. It helps groups to create a safe and happy workspace, while also giving leaders insight into the overall of feelings individuals on their team or class.
