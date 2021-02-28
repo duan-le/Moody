@@ -70,6 +70,13 @@ toxicity_index = 0.91
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
+    text_channel_list = []
+    for server in client.guilds:
+        for channel in server.text_channels:
+            text_channel_list.append(channel)
+    # print(text_channel_list)
+    await server.text_channels[11].send("Moody is online! Type `#commands` to start.")
+    
 
 @client.event
 async def on_message(message):
@@ -140,12 +147,12 @@ async def on_message(message):
                 arr = message.content.split()
                 reply = "Invalid use of `#prof_ch` command."
                 if len(arr) == 2:
-                    temp = float(arr[1])
-                    if temp >= 0.0 and temp <= 1.0:
-                        profanity_index = 1 - temp
-                        reply = "Your allowed profanity level is: " + str(round(1 - profanity_index, 2))
+                    new_index = float(arr[1])
+                    if new_index >= 0.0 and new_index <= 1.0:
+                        profanity_index = new_index
+                        reply = "The profanity threshold is: " + "{:.0%}".format(profanity_index)
                     else:
-                        reply = "Your profanity level must be between `0` and `1`."
+                        reply = "The profanity threshold must be between `0` and `1`."
             else:
                 reply = "You are not an admin."
             await message.channel.send(reply)
@@ -154,12 +161,12 @@ async def on_message(message):
                 arr = message.content.split()
                 reply = "Invalid use of `#sev_ch` command."
                 if len(arr) == 2:
-                    temp = float(arr[1])
-                    if temp >= 0.0 and temp <= 1.0:
-                        severe_toxicity_index = 1 - temp
-                        reply = "Your allowed severe toxicity level is: " + str(round(1 - severe_toxicity_index, 2))
+                    new_index = float(arr[1])
+                    if new_index >= 0.0 and new_index <= 1.0:
+                        severe_toxicity_index = new_index
+                        reply = "The severe toxicity threshold is: " + "{:.0%}".format(severe_toxicity_index)
                     else:
-                        reply = "Your severe toxicity level must be between `0` and `1`."
+                        reply = "The severe toxicity threshold must be between `0` and `1`."
             else:
                 reply = "You are not an admin."
             await message.channel.send(reply)
@@ -168,21 +175,21 @@ async def on_message(message):
                 arr = message.content.split()
                 reply = "Invalid use of `#tox_ch` command."
                 if len(arr) == 2:
-                    temp = float(arr[1])
-                    if temp >= 0.0 and temp <= 1.0:
-                        toxicity_index = 1 - temp
-                        reply = "Your allowed toxicity level is: " + str(round(1 - toxicity_index, 2))
+                    new_index = float(arr[1])
+                    if new_index >= 0.0 and new_index <= 1.0:
+                        toxicity_index = new_index
+                        reply = "The toxicity threshold is: " + "{:.0%}".format(toxicity_index)
                     else:
-                        reply = "Your toxicity level must be between `0` and `1`."
+                        reply = "The toxicity threshold must be between `0` and `1`."
             else:
                 reply = "You are not an admin."
             await message.channel.send(reply)
         elif message.content.startswith("#prof"):
-            await message.channel.send("Your allowed profanity level is: " + str(round(1 - profanity_index, 2)))
+            await message.channel.send("The profanity threshold is: " + "{:.0%}".format(profanity_index))
         elif message.content.startswith("#sev"):
-            await message.channel.send("Your allowed severe toxicity level is: " + str(round(1 - severe_toxicity_index, 2)))
+            await message.channel.send("The severe toxicity threshold is: " + "{:.0%}".format(severe_toxicity_index))
         elif message.content.startswith("#tox"):
-            await message.channel.send("Your allowed toxicity level is: " + str(round(1 - toxicity_index, 2)))
+            await message.channel.send("The toxicity threshold is: " + "{:.0%}".format(toxicity_index))
         else:
             reply = "That command does not exist."
             reply += " To view the commands available, type:\n"
