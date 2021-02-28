@@ -1,5 +1,5 @@
-# Moody 
-Visit our Devpost [here](https://devpost.com/software/vibecheck-r95mws)!
+# Moody
+
 
 ## What is Moody?
 Moody is a Discord bot that analyzes text chats to identify the current mood of the conversation. It helps groups to create a safe and happy workspace, while also giving leaders insight into the overall of feelings individuals on their team or class.
@@ -24,13 +24,14 @@ Our Discord bot is currently accessible with the following functions.
 * **#tox_ch** - This is an admin-only command that allows you to change the current value of toxicity allowed.
 
 ## How did we build Moody?
-Moody is developed using Python and the Discord API. Moody's emotion analysis functionality is made with the help of Perspective API's machine learning models which allows for the identification of abusive and toxic messages within a Discord server. A record of users who are toxic are kept in a database using MongoDB Atlas.
+Moody is developed using Python and the Discord API. Moody's emotion analysis functionality is made with the help of Perspective API's machine learning models which allows for the identification of abusive and toxic messages within a Discord server. A record of users who are toxic are kept in a database using MongoDB Atlas. Moody is deployed and hosted using Heroku.
 
 The following technologies were involved in the making of Moody:
-* [Python](https://www.python.org/)
-* [Perspective API](https://www.perspectiveapi.com/)
 * [Discord API](https://discord.com/developers/docs/intro)
+* [Heroku](https://www.heroku.com/)
 * [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+* [Perspective API](https://www.perspectiveapi.com/)
+* [Python](https://www.python.org/)
 
 ## Challenges building Moody?
 * Learning the Discord framework.
