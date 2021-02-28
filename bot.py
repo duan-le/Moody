@@ -54,13 +54,22 @@ async def on_message(message):
     
     global languages
    
-    # Commands
+    # Check for commands
     if message.content.startswith("#"):
         # Display all available commands
-        if message.content.startswith("#help"):
+        if message.content.startswith("#commands"):
             reply = (
-            "1. To change the analyzed language: " +
-            "```#lang <language>```"
+                "1. To learn more about what I do: " +
+                "```#info```" +
+                "2. To change the analyzed language: " +
+                "```#lang <language>```"
+            )
+            await message.channel.send(reply)
+        # Displays what the bot do
+        elif message.content.startswith("#info"):
+            reply = (
+                "This bot helps to analyze text that is typed in discord, and notifies admins of any toxicity and/or profanity. When a user types anything toxic and/or profane, a message will be sent to the admins if it exceeds a toxicity rating of X%. If the user consistently types toxic and/or profane comments X times, there will be a message that appears in the chat visible to all." +
+                "Settings that you can change for this bot include the language being analyzed, the level of toxicity that you want to be notified for, and the number of times a user is toxic before a message is sent to the public chat."
             )
             await message.channel.send(reply)
         # Analysis language selection command 
@@ -80,12 +89,21 @@ async def on_message(message):
             reply = "That command does not exist."
             await message.channel.send(reply)
     # Analyze normal messages
-    # else:
-    #     response = service.comments().analyze(body=create_analyze_request(message.content)).execute()
-    #     reply = "NLP RESULT\n```"
-    #     for attribute in response["attributeScores"]:
-    #         reply += attribute + ": " + str(response["attributeScores"][attribute]["summaryScore"]["value"]) + "\n"
-    #     reply += "```"
-    #     await message.channel.send(reply)
+    else:
+        response = service.comments().analyze(body=create_analyze_request(message.content)).execute()
+        reply = "NLP RESULT\n"
+        if response["attributeScores"]["TOXICITY"]["summaryScore"]["value"] >= 0.92 or response["attributeScores"]["SEVERE_TOXICITY"]["summaryScore"]["value"] >= 0.87:
+            reply += "I see the level of toxicity is getting to a staggeringly high point! Please be more mindful of others around you."
+        elif response["attributeScores"]["PROFANITY"]["summaryScore"]["value"] >= 0.81:
+            reply += "It looks like you are swearing just a bit too much! Please tone down the profanity!"
+        reply += "```"
+        for attribute in response["attributeScores"]:
+            reply += attribute + ": " + str(response["attributeScores"][attribute]["summaryScore"]["value"]) + "\n"
+        reply += "```"
+        await message.channel.send(reply)
+
+    # 0.81 for profanity
+    # 0.87 for severe
+    # 0.91 for toxic
 
 client.run(DISCORD_BOT_TOKEN)
