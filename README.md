@@ -47,3 +47,9 @@ The following technologies were involved in the making of Moody.
 ## What does the future hold?
 * Increasing features and functionality.
 * Partnering with others to expand the project.
+
+## Made By
+* Duan Le
+* Nicolo Rivera
+* Hemish Minhas
+* Khaled Elmalawany
