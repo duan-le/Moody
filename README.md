@@ -28,7 +28,7 @@ Our Discord bot is currently accessible with the following functions.
 The following technologies were involved in the making of Moody.
 * [Python](https://www.python.org/)
 * [Perspective API](https://www.perspectiveapi.com/)
-* [Discord](https://discord.com/developers/docs/intro)
+* [Discord API](https://discord.com/developers/docs/intro)
 
 ## Challenges building Moody?
 * Learning the Discord framework.
