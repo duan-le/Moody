@@ -49,8 +49,8 @@ The following technologies were involved in the making of Moody:
 
 ## What does the future hold?
 * Increasing features and functionality.
-* Add more languages
-* To be able to analyze more emotions
-* Dashboard
-* Social Media
+* Add more languages.
+* To be able to analyze more emotions.
+* Dashboard.
+* Social media.
 * Partnering with others to expand the project.
